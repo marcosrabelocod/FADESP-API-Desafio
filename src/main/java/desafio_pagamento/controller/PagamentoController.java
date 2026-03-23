@@ -56,7 +56,7 @@ public class PagamentoController {
     public ResponseEntity<?> inativarPAgamento(@PathVariable Long id){
         try{
             pagamentoService.inativarPagamento(id);
-            return ResponseEntity.ok("Pagamento inativo com sucesso.");
+            return ResponseEntity.ok("Exclusão lógica do pagamento realizada com sucesso.");
         } catch(IllegalArgumentException | IllegalStateException e){
             // Apanha o erro se tentar apagar algo que já não está Pendente
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -26,7 +26,7 @@ public class PagamentoRepository{
 
     // 1 salvar o novo pagamento com o gerador de ID do H2
     public Pagamento salvar(Pagamento pagamento){
-        String sql = "INSET INTO tb_pagamento (codigo_debito, cpf_cnpj, metodo_pagamento, numero_cartao, valor, status, ativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tb_pagamento (codigo_debito, cpf_cnpj, metodo_pagamento, numero_cartao, valor, status, ativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
