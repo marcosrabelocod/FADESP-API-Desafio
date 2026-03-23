@@ -1,0 +1,51 @@
+### 1. Criar um novo pagamento (PIX - não precisa de cartão)
+POST http://localhost:8080/pagamentos
+Content-Type: application/json
+
+{
+    "codigoDebito": 1001,
+    "cpfCnpj": "12345678909",
+    "metodoPagamento": "pix",
+    "valor": 150.50
+}
+
+### 2. Criar um pagamento com cartão (Para testarmos as regras a seguir)
+POST http://localhost:8080/pagamentos
+Content-Type: application/json
+
+{
+    "codigoDebito": 1002,
+    "cpfCnpj": "98765432100",
+    "metodoPagamento": "cartao_credito",
+    "numeroCartao": "1234-5678-9012-3456",
+    "valor": 299.99
+}
+
+### 3. Listar todos os pagamentos (GET)
+GET http://localhost:8080/pagamentos
+
+### 4. Atualizar o status do pagamento 1 para Sucesso (PUT)
+PUT http://localhost:8080/pagamentos/1/status
+Content-Type: application/json
+
+{
+    "status": "Processado com Sucesso"
+}
+
+### 5. O Teste de Ouro: Tentar quebrar a regra da Máquina de Estados (PUT)
+# Vai tentar mudar o pagamento 1 (que já tem sucesso) para Falha. 
+# A nossa API TEM DE bloquear isto com um Erro 400!
+PUT http://localhost:8080/pagamentos/1/status
+Content-Type: application/json
+
+{
+    "status": "Processado com Falha"
+}
+
+### 6. Exclusão Lógica do pagamento 2 (DELETE)
+# O pagamento 2 ainda está "Pendente de Processamento", por isso a inativação deve funcionar.
+DELETE http://localhost:8080/pagamentos/3
+
+### 7. Confirmar os filtros e a inativação (GET)
+# O pagamento 2 já não deve aparecer aqui, pois o ativo=false o esconde!
+GET http://localhost:8080/pagamentos?status=Processado com Sucesso

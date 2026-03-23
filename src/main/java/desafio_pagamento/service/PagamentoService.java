@@ -6,6 +6,7 @@ import desafio_pagamento.repository.PagamentoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Arrays;
 
 @Service
 public class PagamentoService {
@@ -17,8 +18,21 @@ public class PagamentoService {
 
     //1 Receber e validar novo pagamento
     public Pagamento receberPagamento(PagamentoRequestDTO dto){
-        //Validação de numero do cartão somente para as opções credito ou debito
+        // 1. Validação do Método de Pagamento (A Lista VIP)
+        List<String> metodosValidos = Arrays.asList("boleto", "pix", "cartao_credito", "cartao_debito");
         String metodo = dto.getMetodoPagamento();
+        
+        if (metodo == null || !metodosValidos.contains(metodo.toLowerCase())) {
+            throw new IllegalArgumentException("Método de pagamento inválido. Aceitos: boleto, pix, cartao_credito ou cartao_debito.");
+        }
+
+        // 2. Validação exigida no PDF: Número do cartão só para crédito ou débito
+        if ((metodo.equals("cartao_credito") || metodo.equals("cartao_debito")) && 
+            (dto.getNumeroCartao() == null || dto.getNumeroCartao().trim().isEmpty())) {
+            throw new IllegalArgumentException("Número do cartão é obrigatório para pagamentos com cartão.");
+        }
+
+        //Validação de numero do cartão somente para as opções credito ou debito
         if ((metodo.equals("cartao_credito") || metodo.equals("cartao_debito"))&&
             (dto.getNumeroCartao() == null || dto.getNumeroCartao().trim().isEmpty())){
             throw new IllegalArgumentException("Numero do cartão é obrigatorio para pagamento com cartão");
